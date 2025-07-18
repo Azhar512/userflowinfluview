@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Creator User Flow – InfluView</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .scale-hover:hover {
+            transform: scale(1.05);
+        }
+        
+        .rotate-90 {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">👤 Enhanced Creator User Flow – InfluView</h1>
+                <p class="text-gray-600 mb-6">Detailed mapping of the creator's journey on the platform.</p>
+            </div>
+
+            <!-- Journey Flow -->
+            <div class="relative">
+                <!-- Journey Steps -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8" id="journeySteps">
+                    <!-- Journey steps will be populated by JavaScript -->
+                </div>
+
+                <!-- Detailed View -->
+                <div id="detailedView" class="bg-white rounded-xl shadow-lg p-8 mb-8 border-t-4 border-blue-500 hidden">
+                    <!-- Detailed view content will be populated by JavaScript -->
+                </div>
+
+                <!-- Journey Summary -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <!-- Left Column - Journey Summary -->
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">👤 Creator Journey Summary</h2>
+                        <div class="grid grid-cols-1 gap-6" id="journeySummary">
+                            <!-- Summary content will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Additional Navigation Routes -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <i data-lucide="arrow-right" class="w-6 h-6 text-yellow-500"></i>
+                            Additional Navigation Routes
+                        </h2>
+                        <div class="space-y-4" id="navigationRoutes">
+                            <!-- Navigation routes will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const creatorUserFlow = [
+            {
+                stage: "Splash Screen",
+                action: "Fullscreen logo + animated tagline",
+                icon: "sparkles",
+                color: "bg-blue-500",
+                details: {
+                    ui: "Fullscreen logo + animated tagline",
+                    cta: '"Get Started"',
+                    tech: "Fade-in animation, responsive design",
+                    component: "N/A",
+                },
+            },
+            {
+                stage: "User Type Selection",
+                action: 'Two large interactive cards/buttons – "I\'m a Creator" | "I\'m a Brand"',
+                icon: "users",
+                color: "bg-green-500",
+                details: {
+                    ui: 'Two large interactive cards/buttons – "I\'m a Creator" | "I\'m a Brand"',
+                    logic: "Route user to respective onboarding flows",
+                    component: '<UserTypeSelector />',
+                },
+            },
+            {
+                stage: "Sign-Up / Login",
+                action: "Options for sign-up/login",
+                icon: "log-in",
+                color: "bg-purple-500",
+                details: {
+                    options: ["Sign up with Email + Password", "Continue with Google / Instagram (Social Auth)"],
+                    validation: "Real-time validation",
+                    component: '<AuthForm mode="creator" />',
+                },
+            },
+            {
+                stage: "Onboarding: Niche & Visibility Setup",
+                action: "Multi-step form for niche and visibility",
+                icon: "settings",
+                color: "bg-orange-500",
+                details: {
+                    form: [
+                        "Select Primary Category (e.g., Fashion, Fitness)",
+                        "Select Subcategory (e.g., Streetwear, Yoga)",
+                        "Add Relevant Hashtags (#fashionblogger, #wellness)",
+                        "Target Audience Region (optional)",
+                    ],
+                    tooltips: "Explain importance of each selection",
+                    component: "<OnboardingSteps /> with progress indicator",
+                },
+            },
+            {
+                stage: "Profile Creation (Main Setup)",
+                action: "Fields for profile details",
+                icon: "user-plus",
+                color: "bg-indigo-500",
+                details: {
+                    fields: [
+                        "Profile Photo",
+                        "Cover Banner Image",
+                        "Short Bio (280 characters)",
+                        "Social Links (IG, TikTok, YouTube, Twitter, etc.)",
+                        "Upload Pricing Sheet (PDF or Table UI)",
+                        "Upload Media Kit (optional)",
+                    ],
+                    previewToggle: '"See how your profile looks"',
+                    component: "<ProfileForm />",
+                },
+            },
+            {
+                stage: "Dashboard (Post-Signup Landing)",
+                action: "Personalized dashboard after profile completion",
+                icon: "layout-dashboard",
+                color: "bg-pink-500",
+                details: {
+                    statsPreview: "Weekly views, brand messages, current ranking",
+                    quickLinks: ["Edit Profile", "View Leaderboard", "Access Inbox", "Share Profile"],
+                    component: "<CreatorDashboard />",
+                    conditionalUI: '"Complete your profile to unlock more visibility"',
+                },
+            },
+            {
+                stage: "Leaderboard Access",
+                action: "Check position by niche or region",
+                icon: "trophy",
+                color: "bg-yellow-500",
+                details: {
+                    tabs: ["By Region", "By Niche", "Global"],
+                    infoDisplayed: "Rank, Score, Badge Level",
+                    weeklyUpdates: "Shown via animated counters",
+                    component: "<Leaderboard />",
+                },
+            },
+            {
+                stage: "Inbox – Brand Messages",
+                action: "Receive lead/inquiry from brand, respond via chat",
+                icon: "message-square",
+                color: "bg-teal-500",
+                details: {
+                    ui: "Clean inbox with filter (Unread, All)",
+                    messaging: "Real-time chat OR async messages",
+                    features: ["Accept/Decline proposals", "CTA to download leads/contact info"],
+                    component: "<Inbox />",
+                },
+            },
+            {
+                stage: "Notifications & Badge Achievements",
+                action: "Get notified of new views, leads, and ranking changes",
+                icon: "bell",
+                color: "bg-red-500",
+                details: {
+                    triggers: "Weekly performance, rank change, new messages",
+                    gamification: ["Bronze → Silver → Gold badges", "Milestones (e.g., “Top 10 in Pakistan!”)"],
+                    component: "<NotificationCenter />",
+                },
+            },
+            {
+                stage: "Share & Grow",
+                action: "Share badge and link to social media",
+                icon: "share-2",
+                color: "bg-cyan-500",
+                details: {
+                    options: ["Share Leaderboard Badge on Instagram/TikTok", "Share Profile Link"],
+                    builtInTemplates: ['"Share as Story"', '"Embed in Bio"'],
+                    component: "<ShareModal />",
+                },
+            },
+        ];
+
+        const additionalNavigationRoutes = [
+            { from: "Dashboard", to: "Leaderboard", condition: "Always visible", example: 'Click "Leaderboard"' },
+            { from: "Dashboard", to: "Inbox", condition: "If new message", example: 'Click "Inbox"' },
+            { from: "Inbox", to: "Creator Profile", condition: "View Sender", example: "Click brand name" },
+            { from: "Profile", to: "Edit Profile", condition: "Always", example: "Edit button" },
+            { from: "Dashboard", to: "Share Modal", condition: "On Badge Unlock", example: "“Share Now” prompt" },
+        ];
+
+        // State
+        let selectedStage = null;
+
+        // Functions to render UI
+        function renderJourneySteps() {
+            const container = document.getElementById('journeySteps');
+            container.innerHTML = creatorUserFlow.map((step, index) => `
+                <div class="relative bg-white rounded-xl shadow-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-xl scale-hover ${selectedStage === index ? 'ring-2 ring-blue-500' : ''}" 
+                     onclick="toggleStage(${index})">
+                    <!-- Stage Number -->
+                    <div class="absolute -top-3 -left-3 w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        ${index + 1}
+                    </div>
+                    
+                    <!-- Stage Header -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="${step.color} rounded-lg p-2 text-white">
+                            <i data-lucide="${step.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">${step.stage}</h3>
+                    </div>
+                    
+                    <!-- Stage Content -->
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold text-gray-800 text-sm">Action</h4>
+                            <p class="text-gray-600 text-sm">${step.action}</p>
+                        </div>
+                        ${step.details.component ? `
+                        <div>
+                            <h4 class="font-semibold text-gray-800 text-sm">Component</h4>
+                            <p class="text-gray-600 text-sm">${step.details.component}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Expand indicator -->
+                    <div class="mt-4 text-center">
+                        <i data-lucide="arrow-right" class="w-4 h-4 mx-auto text-gray-400 transition-transform duration-200 ${selectedStage === index ? 'rotate-90' : ''}"></i>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons(); // Re-render Lucide icons after updating HTML
+        }
+
+        function renderDetailedView() {
+            const detailedView = document.getElementById('detailedView');
+            
+            if (selectedStage === null) {
+                detailedView.classList.add('hidden');
+                detailedView.innerHTML = ''; // Clear content when hidden
+                return;
+            }
+            
+            const step = creatorUserFlow[selectedStage];
+            detailedView.classList.remove('hidden');
+            detailedView.classList.add('fade-in'); // Add fade-in animation
+            
+            let detailsHtml = '';
+            for (const key in step.details) {
+                const value = step.details[key];
+                let label = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize first letter
+                let icon = '';
+
+                // Assign specific icons based on key
+                switch(key) {
+                    case 'ui': icon = '🎨'; break;
+                    case 'cta': icon = '👆'; break;
+                    case 'tech': icon = '💻'; break;
+                    case 'logic': icon = '🧠'; break;
+                    case 'options': icon = '⚙️'; break;
+                    case 'validation': icon = '✅'; break;
+                    case 'form': icon = '📝'; break;
+                    case 'tooltips': icon = '💡'; break;
+                    case 'fields': icon = '📋'; break;
+                    case 'previewToggle': icon = '👁️'; break;
+                    case 'statsPreview': icon = '📈'; break;
+                    case 'quickLinks': icon = '🔗'; break;
+                    case 'conditionalUI': icon = '💡'; break;
+                    case 'tabs': icon = '🗂️'; break;
+                    case 'infoDisplayed': icon = '📊'; break;
+                    case 'weeklyUpdates': icon = '🔄'; break;
+                    case 'messaging': icon = '💬'; break;
+                    case 'features': icon = '✨'; break;
+                    case 'triggers': icon = '🔔'; break;
+                    case 'gamification': icon = '🎮'; break;
+                    case 'builtInTemplates': icon = '📄'; break;
+                    case 'component': icon = '🧩'; break;
+                    default: icon = ''; // No icon for unknown keys
+                }
+
+                if (Array.isArray(value)) {
+                    detailsHtml += `
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                ${icon} <span>${label}</span>
+                            </h3>
+                            <ul class="list-disc list-inside text-gray-700 mb-6">
+                                ${value.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    detailsHtml += `
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                ${icon} <span>${label}</span>
+                            </h3>
+                            <p class="text-gray-700 mb-6">${value}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            detailedView.innerHTML = `
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="${step.color} rounded-lg p-3 text-white">
+                        <i data-lucide="${step.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">${step.stage}</h2>
+                        <p class="text-gray-600">${step.action}</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${detailsHtml}
+                </div>
+            `;
+            lucide.createIcons(); // Re-render Lucide icons after updating HTML
+        }
+
+        function renderJourneySummary() {
+            const summary = document.getElementById('journeySummary');
+            summary.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-100 rounded-full p-3">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">Total Steps</h3>
+                        <p class="text-2xl font-bold text-blue-500">${creatorUserFlow.length}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="bg-green-100 rounded-full p-3">
+                        <i data-lucide="target" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">Key Focus</h3>
+                        <p class="text-gray-700">Profile optimization and monetization</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-100 rounded-full p-3">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">Primary Goal</h3>
+                        <p class="text-gray-700">Increase visibility and earn from brand partnerships</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons(); // Re-render Lucide icons after updating HTML
+        }
+
+        function renderNavigationRoutes() {
+            const container = document.getElementById('navigationRoutes');
+            container.innerHTML = additionalNavigationRoutes.map((route, index) => `
+                <div class="bg-white/80 rounded-lg p-4 border border-indigo-100">
+                    <p class="text-gray-700 text-sm">
+                        <span class="font-semibold text-indigo-900">${route.from}</span> to 
+                        <span class="font-semibold text-indigo-900">${route.to}</span>
+                    </p>
+                    <p class="text-gray-600 text-xs mt-1">
+                        Condition: ${route.condition} | Example: ${route.example}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        // Event handler for toggling stage details
+        function toggleStage(index) {
+            selectedStage = selectedStage === index ? null : index;
+            renderJourneySteps(); // Re-render steps to update active state
+            renderDetailedView(); // Render/hide detailed view
+        }
+
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            renderJourneySteps();
+            renderDetailedView();
+            renderJourneySummary();
+            renderNavigationRoutes();
+            lucide.createIcons(); // Initial rendering of all Lucide icons
+        });
+    </script>
+</body>
+</html>
